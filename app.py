@@ -1,28 +1,11 @@
-import time
-import redis
-import json
 from flask import Flask
 from flask import request, jsonify, json
 
 app = Flask(__name__)
-cache = redis.Redis(host='redis', port=6379)
-
-def get_hit_count():
-    retries = 5
-    while True:
-        try:
-            return cache.incr('hits')
-        except redis.exceptions.ConnectionError as exc:
-            if retries == 0:
-                raise exc
-            retries -= 1
-            time.sleep(0.5)
 
 @app.route('/')
 def hello():
-    count = get_hit_count()
-    return 'Hello World! I have been seen {} times.\n'.format(count)
-
+    return 'Hello World'
 
 @app.route('/performances/<event_id>/availabilities', methods=['GET'])
 def getPerformanceCategoryPrice(event_id):
@@ -51,3 +34,6 @@ def getPerformancePrices(event_id):
 #     a = {"priceCategories":[{"priceCategoryId":2093,"priceCategoryCode":1,"priceCategoryName":"Gold"},{"priceCategoryId":2094,"priceCategoryCode":2,"priceCategoryName":"Silver"},{"priceCategoryId":2095,"priceCategoryCode":3,"priceCategoryName":"Bronze"}],"priceTypes":[{"priceTypeId":5678,"priceTypeCode":"A","priceTypeName":"Adult","priceTypeDescription":"Adult Admittance","priceSheetId":32,"admitCount":1,"concessionCount":0,"offerCode":"","qualifierCode":"","entitlement":""},{"priceTypeId":5679,"priceTypeCode":"V","priceTypeName":"Adult","priceTypeDescription":"Adult VISA Special Admittance","priceSheetId":32,"admitCount":1,"concessionCount":0,"offerCode":"ABC","qualifierCode":"VISA","entitlement":""},{"priceTypeId":5680,"priceTypeCode":"J","priceTypeName":"Junior","priceTypeDescription":"Junior Admittance","priceSheetId":32,"admitCount":1,"concessionCount":1,"offerCode":"","qualifierCode":"","entitlement":""}],"offerPrices":[],"ticketPrices":[{"prices":[{"priceId":7767,"priceCategoryId":2093,"priceCategoryCode":1,"priceTypeId":5678,"priceTypeCode":"A","priceSheetId":32,"priceNet":44000,"feeTypes":[{"feeType":"2","feeTypeName":"Booking Fee","inside":False,"feeBucket":"bfee","feesDetailed":[{"feeId":21,"feeSheetId":5,"feeCode":"","feeName":"TT Booking Fee","feeDescription":"TT Booking Fee for 99.00 to 199.00","feeTotal":450,"financeCode":"1234"}]}]},{"priceId":7768,"priceCategoryId":2093,"priceCategoryCode":1,"priceTypeId":5678,"priceTypeCode":"V","priceSheetId":32,"priceNet":40000,"feeTypes":[{"feeType":"2","feeTypeName":"Booking Fee","inside":False,"feeBucket":"bfee","feesDetailed":[{"feeId":21,"feeSheetId":5,"feeCode":"","feeName":"TT Booking Fee","feeDescription":"TT Booking Fee for 99.00 to 199.00","feeTotal":450,"financeCode":"1234"}]}]},{"priceId":7769,"priceCategoryId":2093,"priceCategoryCode":1,"priceTypeId":5678,"priceTypeCode":"J","priceSheetId":32,"priceNet":25000,"feeTypes":[{"feeType":"2","feeTypeName":"Booking Fee","inside":False,"feeBucket":"bfee","feesDetailed":[{"feeId":21,"feeSheetId":5,"feeCode":"","feeName":"TT Booking Fee","feeDescription":"TT Booking Fee for 99.00 to 199.00","feeTotal":450,"financeCode":"1234"}]}]},{"priceId":7777,"priceCategoryId":2094,"priceCategoryCode":2,"priceTypeId":5678,"priceTypeCode":"A","priceSheetId":32,"priceNet":34000,"feeTypes":[{"feeType":"2","feeTypeName":"Booking Fee","inside":False,"feeBucket":"bfee","feesDetailed":[{"feeId":21,"feeSheetId":5,"feeCode":"","feeName":"TT Booking Fee","feeDescription":"TT Booking Fee for 99.00 to 199.00","feeTotal":450,"financeCode":"1234"}]}]},{"priceId":7778,"priceCategoryId":2094,"priceCategoryCode":2,"priceTypeId":5678,"priceTypeCode":"V","priceSheetId":32,"priceNet":30000,"feeTypes":[{"feeType":"2","feeTypeName":"Booking Fee","inside":False,"feeBucket":"bfee","feesDetailed":[{"feeId":21,"feeSheetId":5,"feeCode":"","feeName":"TT Booking Fee","feeDescription":"TT Booking Fee for 99.00 to 199.00","feeTotal":450,"financeCode":"1234"}]}]},{"priceId":7779,"priceCategoryId":2094,"priceCategoryCode":2,"priceTypeId":5678,"priceTypeCode":"J","priceSheetId":32,"priceNet":15000,"feeTypes":[{"feeType":"2","feeTypeName":"Booking Fee","inside":False,"feeBucket":"bfee","feesDetailed":[{"feeId":21,"feeSheetId":5,"feeCode":"","feeName":"TT Booking Fee","feeDescription":"TT Booking Fee for 99.00 to 199.00","feeTotal":450,"financeCode":"1234"}]}]},{"priceId":7757,"priceCategoryId":2095,"priceCategoryCode":3,"priceTypeId":5678,"priceTypeCode":"A","priceSheetId":32,"priceNet":24000,"feeTypes":[{"feeType":"2","feeTypeName":"Booking Fee","inside":False,"feeBucket":"bfee","feesDetailed":[{"feeId":21,"feeSheetId":5,"feeCode":"","feeName":"TT Booking Fee","feeDescription":"TT Booking Fee for 99.00 to 199.00","feeTotal":450,"financeCode":"1234"}]}]},{"priceId":7758,"priceCategoryId":2095,"priceCategoryCode":3,"priceTypeId":5678,"priceTypeCode":"V","priceSheetId":32,"priceNet":20000,"feeTypes":[{"feeType":"2","feeTypeName":"Booking Fee","inside":False,"feeBucket":"bfee","feesDetailed":[{"feeId":21,"feeSheetId":5,"feeCode":"","feeName":"TT Booking Fee","feeDescription":"TT Booking Fee for 99.00 to 199.00","feeTotal":450,"financeCode":"1234"}]}]},{"priceId":7759,"priceCategoryId":2095,"priceCategoryCode":2,"priceTypeId":5678,"priceTypeCode":"J","priceSheetId":32,"priceNet":5000,"feeTypes":[{"feeType":"2","feeTypeName":"Booking Fee","inside":False,"feeBucket":"bfee","feesDetailed":[{"feeId":21,"feeSheetId":5,"feeCode":"","feeName":"TT Booking Fee","feeDescription":"TT Booking Fee for 99.00 to 199.00","feeTotal":450,"financeCode":"1234"}]}]}]}]}
 #     #a = [{"priceCategoryId":2093,"priceCategoryCode":1,"priceCategoryName":"Grey","availability":{"soldOut":False,"statusCode":"Ok"}}]
 #     return json.jsonify(a)
+
+if __name__ == '__main__':
+    app.run(debug=True,host='0.0.0.0')
